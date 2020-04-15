@@ -4,7 +4,7 @@
     "url": "https://github.com/hieutran3010/odl-graphql-client",
     "type": "git"
   },
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0-rc.4",
   "dependencies": {
     "graphql-request": "^1.8.2"
   }
