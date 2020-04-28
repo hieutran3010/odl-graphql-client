@@ -1,21 +1,20 @@
 import upperFirst from "lodash/fp/upperFirst";
+import toString from "lodash/fp/toString";
+import camelCase from "lodash/fp/camelCase";
 import {
   parseBodyQueryVariable,
   convertSelectFieldsArrayToString,
 } from "../util";
-import { MutationOperation, MutationVariables } from "../types";
+import {
+  MutationOperation,
+  MutationVariables,
+  MutationBatchOperation,
+} from "../types";
 
 export default class MutationBuilder {
-  getOperationName = (operation: MutationOperation): string => {
-    switch (operation) {
-      case MutationOperation.Add:
-        return "add";
-      case MutationOperation.Update:
-        return "update";
-      case MutationOperation.Delete:
-        return "delete";
-    }
-  };
+  getOperationName = (
+    operation: MutationOperation | MutationBatchOperation
+  ): string => camelCase(toString(operation));
 
   build = (
     entityName: string,
@@ -40,6 +39,21 @@ export default class MutationBuilder {
     return `mutation${declareVariables} {
       ${entityName} {
         ${operationName}${inputVariables} {
+          ${fields}
+        }
+      }
+    }`;
+  };
+
+  buildBatch = (entityName: string, operation: MutationBatchOperation) => {
+    const formattedEntityName = upperFirst(entityName);
+
+    const operationName = this.getOperationName(operation);
+    const fields = convertSelectFieldsArrayToString(["id", "code"]);
+
+    return `mutation($inputs: [${formattedEntityName}Input!]) {
+      ${entityName} {
+        ${operationName}(inputs: $inputs) {
           ${fields}
         }
       }

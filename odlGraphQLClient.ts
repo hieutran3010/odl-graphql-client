@@ -1,11 +1,13 @@
 import { GraphQLClient } from "graphql-request";
 import omit from "lodash/fp/omit";
 import set from "lodash/fp/set";
+import map from "lodash/fp/map";
 import { QueryRequestBuilder, MutationRequestBuilder } from "./builders";
 import {
   QueryParams,
   QueryOperation,
   MutationOperation,
+  MutationBatchOperation,
   ODLGraphQLClientOptions,
 } from "./types";
 
@@ -88,6 +90,29 @@ export default class ODLGraphqlClient {
       });
   };
 
+  private _executeMutationBatchAsync = (
+    entityName: string,
+    query: string,
+    operation: MutationBatchOperation | string,
+    payloadModels: any[]
+  ) => {
+    const operationName =
+      this.mutationBuilder.getOperationName(
+        operation as MutationBatchOperation
+      ) || (operation as string);
+
+    return this.graphQLClient
+      .request(query, { inputs: payloadModels })
+      .then((response) => {
+        return this.queryBuilder.compactResponse(
+          entityName,
+          response,
+          operationName,
+          {}
+        );
+      });
+  };
+
   queryManyAsync = (
     entityName: string,
     queryParams: QueryParams,
@@ -163,8 +188,8 @@ export default class ODLGraphqlClient {
       });
   };
 
-  addAsync = (entityName: string, model: any, selectFields?: string[]) => {
-    const formattedModel = omit(["id"])(model);
+  addAsync<T>(entityName: string, model: T, selectFields?: string[]) {
+    const formattedModel = omit(["id"])(model as any);
     const mutation = this.mutationBuilder.build(
       entityName,
       MutationOperation.Add,
@@ -179,7 +204,7 @@ export default class ODLGraphqlClient {
       formattedModel,
       {}
     );
-  };
+  }
 
   updateAsync = (
     entityName: string,
@@ -214,6 +239,22 @@ export default class ODLGraphqlClient {
     );
     return this.graphQLClient.request(mutation, { id });
   };
+
+  addBatchAsync<T>(entityName: string, models: T[]) {
+    const formattedBatch = map((model: any) => omit("id")(model))(models);
+
+    const mutation = this.mutationBuilder.buildBatch(
+      entityName,
+      MutationBatchOperation.AddBatch
+    );
+
+    return this._executeMutationBatchAsync(
+      entityName,
+      mutation,
+      MutationBatchOperation.AddBatch,
+      formattedBatch
+    );
+  }
 
   executeCustomMutationAsync = (
     entityName: string,

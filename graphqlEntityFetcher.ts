@@ -77,4 +77,8 @@ export default class GraphQLEntityFetcher {
       variable,
       selectFields
     );
+
+  addBatchAsync<T>(models: T[]) {
+    return this.graphqlClient.addBatchAsync<T>(this.entityName, models);
+  }
 }

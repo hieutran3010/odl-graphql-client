@@ -28,9 +28,15 @@ export enum QueryOperation {
 }
 
 export enum MutationOperation {
-  Add = 0,
-  Update,
-  Delete,
+  Add = "add",
+  Update = "update",
+  Delete = "delete",
+}
+
+export enum MutationBatchOperation {
+  AddBatch = "addBatch",
+  UpdateBatch = "updateBatch",
+  DeleteBatch = "deleteBatch",
 }
 
 export type GraphQLVariable = {
