@@ -212,10 +212,11 @@ export default class ODLGraphqlClient {
     model: any,
     selectFields?: string[]
   ) => {
+    const formattedModel = omit(["id"])(model as any);
     const mutation = this.mutationBuilder.build(
       entityName,
       MutationOperation.Update,
-      model,
+      formattedModel,
       selectFields,
       id
     );
@@ -223,7 +224,7 @@ export default class ODLGraphqlClient {
       entityName,
       mutation,
       MutationOperation.Update,
-      model,
+      formattedModel,
       {},
       id
     );
