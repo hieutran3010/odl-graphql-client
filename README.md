@@ -1,6 +1,6 @@
 # odl-graphql-client
 
-This helps to create a client point to fetch data from backend is built with [odl-graphql](https://github.com/hieutran3010/odl-graphql)
+This helps to create a client point to fetch data from backend is built with [GraphQLDoorNet](https://github.com/hieutran3010/GraphQLDoorNet)
 
 ## Installation
 
