@@ -44,7 +44,7 @@ export type GraphQLVariable = {
   inputVariables: string;
 };
 
-export type ODLGraphQLClientOptions = {
+export type GraphQLDoorClientOptions = {
   headers?: any;
   authenticationToken?: string;
 };

@@ -1,4 +1,4 @@
-import ODLGraphQLClient from "./odlGraphQLClient";
+import GraphQLDoorClient from "./GraphQLDoorClient";
 import GraphQLEntityFetcher from "./graphqlEntityFetcher";
 
-export { ODLGraphQLClient, GraphQLEntityFetcher };
+export { GraphQLDoorClient, GraphQLEntityFetcher };

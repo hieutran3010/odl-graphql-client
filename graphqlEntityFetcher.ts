@@ -1,16 +1,16 @@
-import ODLGraphqlClient from "./odlGraphQLClient";
+import GraphQLDoorClient from "./GraphQLDoorClient";
 import { QueryParams } from "./types";
 import camelCase from "lodash/fp/camelCase";
 
 export default class GraphQLEntityFetcher {
-  graphqlClient: ODLGraphqlClient;
+  graphqlClient: GraphQLDoorClient;
   entityName: string;
   defaultSelectFields: string[];
 
   constructor(
     entityName: string,
     defaultSelectFields: string[],
-    graphqlClient: ODLGraphqlClient
+    graphqlClient: GraphQLDoorClient
   ) {
     this.entityName = camelCase(entityName);
     this.defaultSelectFields = defaultSelectFields;

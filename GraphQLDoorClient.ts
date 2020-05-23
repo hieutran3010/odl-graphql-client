@@ -8,15 +8,15 @@ import {
   QueryOperation,
   MutationOperation,
   MutationBatchOperation,
-  ODLGraphQLClientOptions,
+  GraphQLDoorClientOptions,
 } from "./types";
 
-export default class ODLGraphqlClient {
+export default class GraphQLDoorClient {
   private graphQLClient!: GraphQLClient;
   private queryBuilder: QueryRequestBuilder;
   private mutationBuilder: MutationRequestBuilder;
 
-  constructor(endpoint: string, options?: ODLGraphQLClientOptions) {
+  constructor(endpoint: string, options?: GraphQLDoorClientOptions) {
     this._configGraphQLClient(endpoint, options);
     this.queryBuilder = new QueryRequestBuilder();
     this.mutationBuilder = new MutationRequestBuilder();
@@ -24,7 +24,7 @@ export default class ODLGraphqlClient {
 
   private _configGraphQLClient = (
     endpoint: string,
-    options?: ODLGraphQLClientOptions
+    options?: GraphQLDoorClientOptions
   ) => {
     const { authenticationToken } = options || {};
 

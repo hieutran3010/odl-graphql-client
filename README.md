@@ -19,13 +19,13 @@ yarn add odl-graphql-client
 ## Usage
 
 ```js
-import ODLGraphqlClient from 'odl-graphql-client';
-import {ODLGraphQLClientOptions} from 'odl-graphql-client/types'
+import GraphQLDoorClient from 'graphql-door-client';
+import {GraphQLDoorClientOptions} from 'graphql-door-client/types'
 
 constructor() {
     const endpoint = '<your-graphql-server>';
-    const options : ODLGraphQLClientOptions = {authenticationToken: '<your-authentication-token>', headers: "<your-custom-header-key-value>"};
-    this.graphqlFetcher = new ODLGraphqlClient(endpoint, options); // options is optional
+    const options : GraphQLDoorClientOptions = {authenticationToken: '<your-authentication-token>', headers: "<your-custom-header-key-value>"};
+    this.graphqlFetcher = new GraphQLDoorClient(endpoint, options); // options is optional
 }
 ```
 

@@ -1,12 +1,12 @@
 {
-  "name": "odl-graphql-client",
+  "name": "graphql-door-client",
   "repository": {
-    "url": "git+https://github.com/hieutran3010/odl-graphql-client",
+    "url": "git+https://github.com/hieutran3010/graphql-door-client",
     "type": "git"
   },
-  "version": "1.0.0-rc.14",
+  "version": "1.0.0",
   "dependencies": {
-    "graphql-request": "^1.8.2",
+    "graphql-request": "1.8.2",
     "lodash": "^4.17.15"
   }
 }
