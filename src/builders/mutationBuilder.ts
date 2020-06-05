@@ -1,42 +1,29 @@
-import upperFirst from "lodash/fp/upperFirst";
-import toString from "lodash/fp/toString";
-import camelCase from "lodash/fp/camelCase";
-import {
-  parseBodyQueryVariable,
-  convertSelectFieldsArrayToString,
-} from "../util";
-import {
-  MutationOperation,
-  MutationVariables,
-  MutationBatchOperation,
-} from "../types";
+import upperFirst from 'lodash/fp/upperFirst';
+import toString from 'lodash/fp/toString';
+import camelCase from 'lodash/fp/camelCase';
+import { parseBodyQueryVariable, convertSelectFieldsArrayToString } from '../util';
+import { MutationOperation, MutationVariables, MutationBatchOperation } from '../types';
 
 export default class MutationBuilder {
-  getOperationName = (
-    operation: MutationOperation | MutationBatchOperation
-  ): string => camelCase(toString(operation));
+  getOperationName = (operation: MutationOperation | MutationBatchOperation): string => camelCase(toString(operation));
 
   build = (
     entityName: string,
     operation: MutationOperation,
     payloadModel: any,
     selectedFields?: string[],
-    id?: string
+    id?: string,
   ) => {
     const mutationVariables = this.getMutationVariables(payloadModel, id);
-    let { inputVariables, declareVariables } = parseBodyQueryVariable(
-      mutationVariables
-    );
+    const { inputVariables, declareVariables } = parseBodyQueryVariable(mutationVariables);
 
+    let declare = declareVariables;
     // reformat declare param to adapt dynamic entity type
-    declareVariables = declareVariables.replace(
-      "Input!",
-      `${upperFirst(entityName)}Input!`
-    );
+    declare = declareVariables.replace('Input!', `${upperFirst(entityName)}Input!`);
     const operationName = this.getOperationName(operation);
     const fields = convertSelectFieldsArrayToString(selectedFields);
 
-    return `mutation${declareVariables} {
+    return `mutation${declare} {
       ${entityName} {
         ${operationName}${inputVariables} {
           ${fields}
@@ -49,7 +36,7 @@ export default class MutationBuilder {
     const formattedEntityName = upperFirst(entityName);
 
     const operationName = this.getOperationName(operation);
-    const fields = convertSelectFieldsArrayToString(["id", "code"]);
+    const fields = convertSelectFieldsArrayToString(['id', 'code']);
 
     return `mutation($inputs: [${formattedEntityName}Input!]) {
       ${entityName} {
@@ -65,17 +52,12 @@ export default class MutationBuilder {
     operationName: string,
     payloadModel: any,
     variable: any,
-    selectedFields?: string[]
+    selectedFields?: string[],
   ) => {
     const mutationVariables = this.getMutationVariables(payloadModel);
-    let { inputVariables, declareVariables } = parseBodyQueryVariable(
-      mutationVariables,
-      variable
-    );
+    const { inputVariables, declareVariables } = parseBodyQueryVariable(mutationVariables, variable);
 
-    const fields = convertSelectFieldsArrayToString(
-      selectedFields || ["didSuccess", "errorCode"]
-    );
+    const fields = convertSelectFieldsArrayToString(selectedFields || ['didSuccess', 'errorCode']);
 
     return `mutation${declareVariables} {
       ${entityName} {
@@ -86,11 +68,8 @@ export default class MutationBuilder {
     }`;
   };
 
-  getMutationVariables = (
-    payloadModel?: any,
-    id?: string
-  ): MutationVariables => {
-    let mutationVariables: MutationVariables = {};
+  getMutationVariables = (payloadModel?: any, id?: string): MutationVariables => {
+    const mutationVariables: MutationVariables = {};
     if (id) {
       mutationVariables.id = id;
     }

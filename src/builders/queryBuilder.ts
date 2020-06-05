@@ -1,16 +1,8 @@
+import isEmpty from 'lodash/fp/isEmpty';
 import getOr from 'lodash/fp/getOr';
 import set from 'lodash/fp/set';
-import {
-  parseBodyQueryVariable,
-  convertSelectFieldsArrayToString,
-} from '../util';
-import {
-  QueryOperation,
-  QueryParams,
-  GraphQLVariable,
-  QueryVariables,
-  CountQueryVariables,
-} from '../types';
+import { parseBodyQueryVariable, convertSelectFieldsArrayToString } from '../util';
+import { QueryOperation, QueryParams, GraphQLVariable, QueryVariables, CountQueryVariables } from '../types';
 
 export default class QueryBuilder {
   private _internalBuildQuery = (
@@ -20,7 +12,7 @@ export default class QueryBuilder {
     selectFields?: string[],
   ): string => {
     const operationName = this.getOperationName(operation);
-    let queryFields = convertSelectFieldsArrayToString(selectFields);
+    const queryFields = convertSelectFieldsArrayToString(selectFields);
 
     const query = `
       query${graphQLVariables.declareVariables || ''} {
@@ -56,18 +48,13 @@ export default class QueryBuilder {
     id?: string,
     isCountQuery: boolean = false,
   ): string => {
-    let queryVariables = this.getQueryVariables(params, id, isCountQuery);
+    const queryVariables = this.getQueryVariables(params, id, isCountQuery);
     const graphqlVariable = parseBodyQueryVariable(queryVariables);
-    return this._internalBuildQuery(
-      entityName,
-      graphqlVariable,
-      operation,
-      selectFields,
-    );
+    return this._internalBuildQuery(entityName, graphqlVariable, operation, selectFields);
   };
 
   buildCountQuery = (entityName: string, query: string): string => {
-    const params = {query};
+    const params = { query };
     const queryString = this.buildQuery(
       entityName,
       QueryOperation.Count,
@@ -79,12 +66,7 @@ export default class QueryBuilder {
     return queryString;
   };
 
-  compactResponse = (
-    entityName: string,
-    response: any,
-    operationName: string,
-    defaultValue: any,
-  ) => {
+  compactResponse = (entityName: string, response: any, operationName: string, defaultValue: any) => {
     return getOr(defaultValue, `${entityName}.${operationName}`)(response);
   };
 
@@ -98,14 +80,19 @@ export default class QueryBuilder {
     isCountQuery: boolean = false,
   ): QueryVariables | CountQueryVariables => {
     if (!isCountQuery) {
-      let queryVariables: QueryVariables = {queryParams};
+      let queryVariables = {};
       if (id) {
         queryVariables = set('id', id)(queryVariables);
+      }
+      if (!isEmpty(queryParams)) {
+        queryVariables = set('queryParams', queryParams)(queryVariables);
       }
       return queryVariables;
     }
 
-    const countQueryVariables: CountQueryVariables = {query: queryParams.query};
+    const countQueryVariables: CountQueryVariables = {
+      query: queryParams.query,
+    };
 
     return countQueryVariables;
   };

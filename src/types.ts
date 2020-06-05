@@ -28,15 +28,15 @@ export enum QueryOperation {
 }
 
 export enum MutationOperation {
-  Add = "add",
-  Update = "update",
-  Delete = "delete",
+  Add = 'add',
+  Update = 'update',
+  Delete = 'delete',
 }
 
 export enum MutationBatchOperation {
-  AddBatch = "addBatch",
-  UpdateBatch = "updateBatch",
-  DeleteBatch = "deleteBatch",
+  AddBatch = 'addBatch',
+  UpdateBatch = 'updateBatch',
+  DeleteBatch = 'deleteBatch',
 }
 
 export type GraphQLVariable = {
