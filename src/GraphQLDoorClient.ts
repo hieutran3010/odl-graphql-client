@@ -10,63 +10,79 @@ import {
   MutationBatchOperation,
   GraphQLDoorClientOptions,
 } from './types';
+import { isEmpty } from 'lodash';
 
 export default class GraphQLDoorClient {
   private graphQLClient!: GraphQLClient;
   private queryBuilder: QueryRequestBuilder;
   private mutationBuilder: MutationRequestBuilder;
+  private options: GraphQLDoorClientOptions | undefined;
 
   constructor(endpoint: string, options?: GraphQLDoorClientOptions) {
     this._configGraphQLClient(endpoint, options);
     this.queryBuilder = new QueryRequestBuilder();
     this.mutationBuilder = new MutationRequestBuilder();
+    this.options = options;
   }
 
   private _configGraphQLClient = (endpoint: string, options?: GraphQLDoorClientOptions) => {
-    const { authenticationToken } = options || {};
+    const { headers } = options || {};
 
-    let clientOption = {};
-    if (authenticationToken) {
-      clientOption = set('headers.authorization', `Bearer ${authenticationToken}`)(clientOption);
-    }
-
-    this.graphQLClient = new GraphQLClient(endpoint, clientOption);
+    this.graphQLClient = new GraphQLClient(endpoint, { headers });
   };
 
-  private _executeQueryAsync = (
+  private getToken = async () => {
+    const { authenticationToken, getToken } = this.options || {};
+    let token;
+    if (authenticationToken) {
+      token = authenticationToken;
+    } else if (getToken) {
+      token = await getToken();
+    }
+
+    if (!isEmpty(token)) {
+      this.graphQLClient.setHeader('authorization', `Bearer ${token}`);
+    }
+  };
+
+  private _executeQueryAsync = async (
     entityName: string,
     query: string,
     operation: QueryOperation,
     queryParams: QueryParams,
-    defaultvalue: any,
+    defaultValue: any,
     id?: string,
   ) => {
     const queryVariables = this.queryBuilder.getQueryVariables(queryParams, id);
     const operationName = this.queryBuilder.getOperationName(operation);
 
+    await this.getToken();
+
     return this.graphQLClient.request(query, queryVariables).then((response) => {
-      return this.queryBuilder.compactResponse(entityName, response, operationName, defaultvalue);
+      return this.queryBuilder.compactResponse(entityName, response, operationName, defaultValue);
     });
   };
 
-  private _executeMutationAsync = (
+  private _executeMutationAsync = async (
     entityName: string,
     query: string,
     operation: MutationOperation | string,
     payloadModel: any,
-    defaultvalue: any,
+    defaultValue: any,
     id?: string,
   ) => {
     const mutationVariables = this.mutationBuilder.getMutationVariables(payloadModel, id);
     const operationName =
       this.mutationBuilder.getOperationName(operation as MutationOperation) || (operation as string);
 
+    await this.getToken();
+
     return this.graphQLClient.request(query, mutationVariables).then((response) => {
-      return this.queryBuilder.compactResponse(entityName, response, operationName, defaultvalue);
+      return this.queryBuilder.compactResponse(entityName, response, operationName, defaultValue);
     });
   };
 
-  private _executeMutationBatchAsync = (
+  private _executeMutationBatchAsync = async (
     entityName: string,
     query: string,
     operation: MutationBatchOperation | string,
@@ -74,6 +90,8 @@ export default class GraphQLDoorClient {
   ) => {
     const operationName =
       this.mutationBuilder.getOperationName(operation as MutationBatchOperation) || (operation as string);
+
+    await this.getToken();
 
     return this.graphQLClient.request(query, { inputs: payloadModels }).then((response) => {
       return this.queryBuilder.compactResponse(entityName, response, operationName, {});

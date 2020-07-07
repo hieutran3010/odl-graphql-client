@@ -47,4 +47,5 @@ export type GraphQLVariable = {
 export type GraphQLDoorClientOptions = {
   headers?: any;
   authenticationToken?: string;
+  getToken?: () => Promise<string>;
 };

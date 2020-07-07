@@ -3,8 +3,10 @@ export default class GraphQLDoorClient {
     private graphQLClient;
     private queryBuilder;
     private mutationBuilder;
+    private options;
     constructor(endpoint: string, options?: GraphQLDoorClientOptions);
     private _configGraphQLClient;
+    private getToken;
     private _executeQueryAsync;
     private _executeMutationAsync;
     private _executeMutationBatchAsync;

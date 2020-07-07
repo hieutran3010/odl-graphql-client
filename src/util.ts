@@ -12,12 +12,12 @@ export const parseBodyQueryVariable = (
 ): GraphQLVariable => {
   const variableKeys = keys(variables);
   if (!isEmpty(variableKeys)) {
-    const declareVariables = variableKeys.map((paramKey) => {
+    const declareVariables = variableKeys.map((paramKey: string) => {
       const paramType = get(paramKey)(variable || SUPPORTED_VARIABLES_TYPE);
       return `$${paramKey}: ${paramType}`;
     });
 
-    const inputVariables = variableKeys.map((paramKey) => `${paramKey}: $${paramKey}`);
+    const inputVariables = variableKeys.map((paramKey: string) => `${paramKey}: $${paramKey}`);
 
     return {
       declareVariables: `(${declareVariables.join(',')})`,
