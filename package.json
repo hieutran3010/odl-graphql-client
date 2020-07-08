@@ -25,7 +25,7 @@
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
   },
-  "version": "1.1.2",
+  "version": "1.1.4",
   "dependencies": {
     "graphql-request": "1.8.2",
     "lodash": "^4.17.15"
