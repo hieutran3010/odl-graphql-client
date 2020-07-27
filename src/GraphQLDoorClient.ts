@@ -48,13 +48,13 @@ export default class GraphQLDoorClient {
   private _executeQueryAsync = async (
     entityName: string,
     query: string,
-    operation: QueryOperation,
+    operation: QueryOperation | string,
     queryParams: QueryParams,
     defaultValue: any,
     id?: string,
   ) => {
     const queryVariables = this.queryBuilder.getQueryVariables(queryParams, id);
-    const operationName = this.queryBuilder.getOperationName(operation);
+    const operationName = this.queryBuilder.getOperationName(operation as QueryOperation) || (operation as string);
 
     await this.getToken();
 
@@ -116,8 +116,11 @@ export default class GraphQLDoorClient {
     return this._executeQueryAsync(entityName, query, QueryOperation.GetById, queryParams, {}, id);
   };
 
-  countAsync = (entityName: string, query: string): Promise<number> => {
+  countAsync = async (entityName: string, query: string): Promise<number> => {
     const queryBody = this.queryBuilder.buildCountQuery(entityName, query);
+
+    await this.getToken();
+
     return this.graphQLClient.request(queryBody, { query }).then((response: any) => {
       return this.queryBuilder.compactCountResponse(entityName, response);
     });
@@ -165,5 +168,17 @@ export default class GraphQLDoorClient {
     );
 
     return this._executeMutationAsync(entityName, mutation, mutationName, payload, {});
+  };
+
+  executeCustomQueryAsync = (
+    entityName: string,
+    operationName: string,
+    queryParams: any,
+    variable: any,
+    selectFields: string[],
+  ) => {
+    const query = this.queryBuilder.buildCustomQuery(entityName, operationName, variable, selectFields);
+
+    return this._executeQueryAsync(entityName, query, operationName, queryParams, {});
   };
 }

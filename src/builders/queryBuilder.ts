@@ -1,6 +1,8 @@
 import isEmpty from 'lodash/fp/isEmpty';
 import getOr from 'lodash/fp/getOr';
 import set from 'lodash/fp/set';
+import camelCase from 'lodash/fp/camelCase';
+import toString from 'lodash/fp/toString';
 import { parseBodyQueryVariable, convertSelectFieldsArrayToString } from '../util';
 import { QueryOperation, QueryParams, GraphQLVariable, QueryVariables, CountQueryVariables } from '../types';
 
@@ -27,18 +29,7 @@ export default class QueryBuilder {
     return query;
   };
 
-  getOperationName = (operation: QueryOperation): string => {
-    switch (operation) {
-      case QueryOperation.QueryMany:
-        return 'queryMany';
-      case QueryOperation.QueryOne:
-        return 'queryOne';
-      case QueryOperation.GetById:
-        return 'getById';
-      case QueryOperation.Count:
-        return 'count';
-    }
-  };
+  getOperationName = (operation: QueryOperation): string => camelCase(toString(operation));
 
   buildQuery = (
     entityName: string,
@@ -51,6 +42,20 @@ export default class QueryBuilder {
     const queryVariables = this.getQueryVariables(params, id, isCountQuery);
     const graphqlVariable = parseBodyQueryVariable(queryVariables);
     return this._internalBuildQuery(entityName, graphqlVariable, operation, selectFields);
+  };
+
+  buildCustomQuery = (entityName: string, operationName: string, variables: any, selectFields: string[]) => {
+    const queryVariables = this.getQueryVariables(variables);
+    const { inputVariables, declareVariables } = parseBodyQueryVariable(queryVariables, variables);
+    const fields = convertSelectFieldsArrayToString(selectFields);
+
+    return `query${declareVariables} {
+      ${entityName} {
+          ${operationName}${inputVariables} {
+              ${fields}
+            }
+          }
+        }`;
   };
 
   buildCountQuery = (entityName: string, query: string): string => {

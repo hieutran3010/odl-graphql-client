@@ -19,4 +19,5 @@ export default class GraphQLDoorClient {
     deleteAsync: (entityName: string, id: string) => Promise<unknown>;
     addBatchAsync<T>(entityName: string, models: T[]): Promise<any>;
     executeCustomMutationAsync: (entityName: string, mutationName: string, payload: any, variable: any, selectFields?: string[] | undefined) => Promise<any>;
+    executeCustomQueryAsync: (entityName: string, operationName: string, queryParams: any, variable: any, selectFields: string[]) => Promise<any>;
 }

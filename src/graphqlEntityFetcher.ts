@@ -45,6 +45,9 @@ export default class GraphQLEntityFetcher<T> {
   executeCustomMutationAsync = (mutationName: string, payload: any, variable: any, selectFields?: string[]) =>
     this.graphqlClient.executeCustomMutationAsync(this.entityName, mutationName, payload, variable, selectFields);
 
+  executeCustomQueryAsync = (operationName: string, queryParams: any, variable: any, selectFields: string[]) =>
+    this.graphqlClient.executeCustomQueryAsync(this.entityName, operationName, queryParams, variable, selectFields);
+
   addBatchAsync(models: T[]) {
     return this.graphqlClient.addBatchAsync<T>(this.entityName, models);
   }

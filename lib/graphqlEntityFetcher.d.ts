@@ -13,5 +13,6 @@ export default class GraphQLEntityFetcher<T> {
     updateAsync: (id: string, model: any, selectFields?: string[] | undefined) => Promise<T>;
     deleteAsync: (id: string) => Promise<unknown>;
     executeCustomMutationAsync: (mutationName: string, payload: any, variable: any, selectFields?: string[] | undefined) => Promise<any>;
+    executeCustomQueryAsync: (operationName: string, queryParams: any, variable: any, selectFields: string[]) => Promise<any>;
     addBatchAsync(models: T[]): Promise<any>;
 }

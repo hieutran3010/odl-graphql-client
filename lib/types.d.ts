@@ -17,10 +17,10 @@ export declare type MutationVariables = {
     id?: string;
 };
 export declare enum QueryOperation {
-    QueryMany = 0,
-    QueryOne = 1,
-    Count = 2,
-    GetById = 3
+    QueryMany = "queryMany",
+    QueryOne = "queryOne",
+    Count = "count",
+    GetById = "getById"
 }
 export declare enum MutationOperation {
     Add = "add",

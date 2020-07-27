@@ -21,10 +21,10 @@ export type MutationVariables = {
 };
 
 export enum QueryOperation {
-  QueryMany = 0,
-  QueryOne,
-  Count,
-  GetById,
+  QueryMany = 'queryMany',
+  QueryOne = 'queryOne',
+  Count = 'count',
+  GetById = 'getById',
 }
 
 export enum MutationOperation {
