@@ -1,4 +1,5 @@
-import { QueryParams, GraphQLDoorClientOptions } from './types';
+import { Variables } from 'graphql-request/dist/src/types';
+import { QueryParams, GraphQLDoorClientOptions, MathResult } from './types';
 export default class GraphQLDoorClient {
     private graphQLClient;
     private queryBuilder;
@@ -20,4 +21,6 @@ export default class GraphQLDoorClient {
     addBatchAsync<T>(entityName: string, models: T[]): Promise<any>;
     executeCustomMutationAsync: (entityName: string, mutationName: string, payload: any, variable: any, selectFields?: string[] | undefined) => Promise<any>;
     executeCustomQueryAsync: (entityName: string, operationName: string, queryParams: any, variable: any, selectFields: string[]) => Promise<any>;
+    executeAsync: (entityName: string, operationName: string, query: string, variable?: Variables | undefined, defaultValue?: any) => Promise<any>;
+    sumAsync: (entityName: string, sumField: string, query?: string | undefined) => Promise<MathResult>;
 }

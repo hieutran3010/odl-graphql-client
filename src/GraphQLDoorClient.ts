@@ -1,7 +1,8 @@
 import { GraphQLClient } from 'graphql-request';
+import { Variables } from 'graphql-request/dist/src/types';
 import omit from 'lodash/fp/omit';
-import set from 'lodash/fp/set';
 import map from 'lodash/fp/map';
+import isEmpty from 'lodash/fp/isEmpty';
 import { QueryRequestBuilder, MutationRequestBuilder } from './builders';
 import {
   QueryParams,
@@ -9,8 +10,8 @@ import {
   MutationOperation,
   MutationBatchOperation,
   GraphQLDoorClientOptions,
+  MathResult,
 } from './types';
-import { isEmpty } from 'lodash';
 
 export default class GraphQLDoorClient {
   private graphQLClient!: GraphQLClient;
@@ -180,5 +181,34 @@ export default class GraphQLDoorClient {
     const query = this.queryBuilder.buildCustomQuery(entityName, operationName, variable, selectFields);
 
     return this._executeQueryAsync(entityName, query, operationName, queryParams, {});
+  };
+
+  executeAsync = async (
+    entityName: string,
+    operationName: string,
+    query: string,
+    variable?: Variables | undefined,
+    defaultValue?: any,
+  ) => {
+    await this.getToken();
+    return this.graphQLClient.request(query, variable).then((response) => {
+      return this.queryBuilder.compactResponse(entityName, response, operationName, defaultValue);
+    });
+  };
+
+  sumAsync = async (entityName: string, sumField: string, query?: string): Promise<MathResult> => {
+    const graphQLQuery = `query($query: String!, $field: String!) {
+      ${entityName} {
+          sum(query: $query, field: $field) {
+             value
+          }
+      }
+  }`;
+
+    await this.getToken();
+
+    return this.graphQLClient.request(graphQLQuery, { query, field: sumField }).then((response) => {
+      return this.queryBuilder.compactResponse(entityName, response, 'sum', { value: 0 });
+    });
   };
 }

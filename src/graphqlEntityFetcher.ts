@@ -1,6 +1,7 @@
 import camelCase from 'lodash/fp/camelCase';
 import GraphQLDoorClient from './GraphQLDoorClient';
-import { QueryParams } from './types';
+import { QueryParams, MathResult } from './types';
+import { Variables } from 'graphql-request/dist/src/types';
 
 export default class GraphQLEntityFetcher<T> {
   graphqlClient: GraphQLDoorClient;
@@ -45,10 +46,21 @@ export default class GraphQLEntityFetcher<T> {
   executeCustomMutationAsync = (mutationName: string, payload: any, variable: any, selectFields?: string[]) =>
     this.graphqlClient.executeCustomMutationAsync(this.entityName, mutationName, payload, variable, selectFields);
 
-  executeCustomQueryAsync = (operationName: string, queryParams: any, variable: any, selectFields: string[]) =>
+  executeCustomQueryAsync = <TModel>(
+    operationName: string,
+    queryParams: any,
+    variable: any,
+    selectFields: string[],
+  ): Promise<TModel> =>
     this.graphqlClient.executeCustomQueryAsync(this.entityName, operationName, queryParams, variable, selectFields);
 
   addBatchAsync(models: T[]) {
     return this.graphqlClient.addBatchAsync<T>(this.entityName, models);
   }
+
+  executeAsync = <TModel>(operationName: string, query: string, variables?: Variables | undefined): Promise<TModel> =>
+    this.graphqlClient.executeAsync(this.entityName, operationName, query, variables);
+
+  sumAsync = (sumField: string, query?: string): Promise<MathResult> =>
+    this.graphqlClient.sumAsync(this.entityName, sumField, query);
 }

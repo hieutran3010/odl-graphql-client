@@ -1,5 +1,6 @@
 import GraphQLDoorClient from './GraphQLDoorClient';
-import { QueryParams } from './types';
+import { QueryParams, MathResult } from './types';
+import { Variables } from 'graphql-request/dist/src/types';
 export default class GraphQLEntityFetcher<T> {
     graphqlClient: GraphQLDoorClient;
     entityName: string;
@@ -13,6 +14,8 @@ export default class GraphQLEntityFetcher<T> {
     updateAsync: (id: string, model: any, selectFields?: string[] | undefined) => Promise<T>;
     deleteAsync: (id: string) => Promise<unknown>;
     executeCustomMutationAsync: (mutationName: string, payload: any, variable: any, selectFields?: string[] | undefined) => Promise<any>;
-    executeCustomQueryAsync: (operationName: string, queryParams: any, variable: any, selectFields: string[]) => Promise<any>;
+    executeCustomQueryAsync: <TModel>(operationName: string, queryParams: any, variable: any, selectFields: string[]) => Promise<TModel>;
     addBatchAsync(models: T[]): Promise<any>;
+    executeAsync: <TModel>(operationName: string, query: string, variables?: Variables | undefined) => Promise<TModel>;
+    sumAsync: (sumField: string, query?: string | undefined) => Promise<MathResult>;
 }

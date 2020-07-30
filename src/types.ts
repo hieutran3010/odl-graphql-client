@@ -49,3 +49,7 @@ export type GraphQLDoorClientOptions = {
   authenticationToken?: string;
   getToken?: () => Promise<string>;
 };
+
+export type MathResult = {
+  value: number;
+};
