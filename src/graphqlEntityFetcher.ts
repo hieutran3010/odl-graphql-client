@@ -61,6 +61,6 @@ export default class GraphQLEntityFetcher<T> {
   executeAsync = <TModel>(operationName: string, query: string, variables?: Variables | undefined): Promise<TModel> =>
     this.graphqlClient.executeAsync(this.entityName, operationName, query, variables);
 
-  sumAsync = (sumField: string, query?: string): Promise<MathResult> =>
-    this.graphqlClient.sumAsync(this.entityName, sumField, query);
+  sumAsync = (fields: string, sumFormula: string, query?: string): Promise<MathResult> =>
+    this.graphqlClient.sumAsync(this.entityName, fields, sumFormula, query);
 }

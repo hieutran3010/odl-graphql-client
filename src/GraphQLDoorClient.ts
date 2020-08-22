@@ -140,8 +140,9 @@ export default class GraphQLDoorClient {
     return this._executeMutationAsync(entityName, mutation, MutationOperation.Update, formattedModel, {}, id);
   };
 
-  deleteAsync = (entityName: string, id: string) => {
+  deleteAsync = async (entityName: string, id: string) => {
     const mutation = this.mutationBuilder.build(entityName, MutationOperation.Delete, undefined, ['id', 'code'], id);
+    await this.getToken();
     return this.graphQLClient.request(mutation, { id });
   };
 
@@ -196,10 +197,10 @@ export default class GraphQLDoorClient {
     });
   };
 
-  sumAsync = async (entityName: string, sumField: string, query?: string): Promise<MathResult> => {
-    const graphQLQuery = `query($query: String!, $field: String!) {
+  sumAsync = async (entityName: string, fields: string, sumFormula: string, query?: string): Promise<MathResult> => {
+    const graphQLQuery = `query($query: String!, $field: String!, $sumFormula: String!) {
       ${entityName} {
-          sum(query: $query, field: $field) {
+          sum(query: $query, field: $field, sumFormula: $sumFormula) {
              value
           }
       }
@@ -207,7 +208,7 @@ export default class GraphQLDoorClient {
 
     await this.getToken();
 
-    return this.graphQLClient.request(graphQLQuery, { query, field: sumField }).then((response) => {
+    return this.graphQLClient.request(graphQLQuery, { query, field: fields, sumFormula }).then((response) => {
       return this.queryBuilder.compactResponse(entityName, response, 'sum', { value: 0 });
     });
   };

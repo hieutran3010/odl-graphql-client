@@ -22,5 +22,5 @@ export default class GraphQLDoorClient {
     executeCustomMutationAsync: (entityName: string, mutationName: string, payload: any, variable: any, selectFields?: string[] | undefined) => Promise<any>;
     executeCustomQueryAsync: (entityName: string, operationName: string, queryParams: any, variable: any, selectFields: string[]) => Promise<any>;
     executeAsync: (entityName: string, operationName: string, query: string, variable?: Variables | undefined, defaultValue?: any) => Promise<any>;
-    sumAsync: (entityName: string, sumField: string, query?: string | undefined) => Promise<MathResult>;
+    sumAsync: (entityName: string, fields: string, sumFormula: string, query?: string | undefined) => Promise<MathResult>;
 }

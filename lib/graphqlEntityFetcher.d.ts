@@ -17,5 +17,5 @@ export default class GraphQLEntityFetcher<T> {
     executeCustomQueryAsync: <TModel>(operationName: string, queryParams: any, variable: any, selectFields: string[]) => Promise<TModel>;
     addBatchAsync(models: T[]): Promise<any>;
     executeAsync: <TModel>(operationName: string, query: string, variables?: Variables | undefined) => Promise<TModel>;
-    sumAsync: (sumField: string, query?: string | undefined) => Promise<MathResult>;
+    sumAsync: (fields: string, sumFormula: string, query?: string | undefined) => Promise<MathResult>;
 }
